@@ -15,29 +15,28 @@ This simple skeleton shows how to:
 
 ## Code
 
-```python
 #!/usr/bin/env python3
 import hmac, hashlib, os
 
+ALGO = "HMAC-SHA256"
+CONTEXT = b"commitment:v1"  # domain separation
+
 def seal(message: str, key: bytes) -> str:
-    """Return the HMAC-SHA256 commitment of a message with secret key."""
-    return hmac.new(key, message.encode(), hashlib.sha256).hexdigest()
+    data = CONTEXT + message.encode("utf-8")
+    return hmac.new(key, data, hashlib.sha256).hexdigest()
 
 def verify(message: str, key: bytes, commitment: str) -> bool:
-    """Check if message + key matches the original commitment."""
-    return seal(message, key) == commitment
+    expected = seal(message, key)
+    return hmac.compare_digest(expected, commitment)
 
 if __name__ == "__main__":
-    # Generate a random secret key
-    key = os.urandom(32)
+    key = os.urandom(32)          # keep this secret until reveal
+    hidden_word = "example"       # your committed message
 
-    # Hidden message (replace with any string)
-    hidden_word = "example"
-
-    # Commitment (published before reveal)
     commitment = seal(hidden_word, key)
+    print("Algorithm:", ALGO)
     print("Commitment:", commitment)
 
-    # Later: verify message + key
+    # Later: reveal `hidden_word` and hex(key) (or base64)
     ok = verify(hidden_word, key, commitment)
     print("Verification:", ok)
