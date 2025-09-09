@@ -13,8 +13,15 @@ This simple skeleton shows how to:
 
 ---
 
+# Minimal HMAC-SHA256 Commitment
+
+Author: Rayan Reza O’ghabian (2025)
+
+---
+
 ## Code
 
+```python
 #!/usr/bin/env python3
 import hmac, hashlib, os
 
